@@ -951,6 +951,94 @@ public class ANS_376 {
 
 
 
+#### 2）射击气球
+
+~~~cpp
+Leetcode 452
+/**
+
+ * 在二维空间中有许多球形的气球。对于每个气球，提供的输入是水平方向上，气球直径的开始和结束坐标。
+ * 由于它是水平的，所以y坐标并不重要，因此只要知道开始和结束的x坐标就足够了。开始坐标总是小于结束坐标。
+ * 平面内最多存在104个气球。
+ *
+ * 一支弓箭可以沿着x轴从不同点完全垂直地射出。在坐标x处射出一支箭，若有一个气球的直径的开始和结束坐标为 xstart，xend，
+ * 且满足  xstart ≤ x ≤ xend，则该气球会被引爆。可以射出的弓箭的数量没有限制。 弓箭一旦被射出之后，可以无限地前进。
+ * 我们想找到使得所有气球全部被引爆，所需的弓箭的最小数量。
+ *
+ * 输入:
+ * [[10,16], [2,8], [1,6], [7,12]]
+ * 输出:
+ * 2
+ * 解释:
+ * 对于该样例，我们可以在x = 6（射爆[2,8],[1,6]两个气球）和 x = 11（射爆另外两个气球）。
+   */
+    
+#include <algorithm>
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+bool cmp(const pair<int, int> &a, const pair<int, int> &b) {
+    return a.first < b.first;
+}
+
+class leetcode452 {
+  private:
+  public:
+    int findMinArrowShots(vector<pair<int, int>> &points) {
+        if (points.size() == 0) {
+            return 0;
+        }
+
+        sort(points.begin(), points.end(), cmp);
+
+        int shot_num = 1;
+        int shot_begin = points[0].first;
+        int shot_end = points[0].second;
+
+        for (int i = 0; i < points.size(); i++) {
+            if (points[i].first <= shot_end) {
+                shot_begin = points[i].first;
+
+                if (shot_end > points[i].second) {
+                    shot_end = points[i].second;
+                }
+            } else {
+                shot_num++;
+                shot_begin = points[i].first;
+                shot_end = points[i].second;
+            }
+        }
+
+        return shot_num;
+    }
+};
+
+int main(){
+    vector<pair<int,int>> points;
+
+    points.push_back(make_pair(10,16));
+    points.push_back(make_pair(2,8));
+    points.push_back(make_pair(1,6));
+    points.push_back(make_pair(7,12));
+    leetcode452 ans452;
+    int res= ans452.findMinArrowShots(points);
+    cout<<res<<endl;
+
+}
+
+  
+   
+    
+
+
+~~~
+
+
+
+
+
 
 
 
@@ -965,7 +1053,71 @@ public class ANS_376 {
 
 ### 3：hard
 
+####  1）最优加油方法
 
+![image-20210120161549055](/home/bibofu/.config/Typora/typora-user-images/image-20210120161549055.png)
+
+~~~cpp
+/**一辆卡车，初始时，距离终点L，油量为P，在起点到终点途中有n个加油站，每个加油站油量有限，而卡车的油箱容量无限，卡车在行车途中，每   *走一个单位的距离消耗一个单位的油量，给定n个加油站距离终点的距离以及油存储量。问卡车是否能到达终点，如果可达，最少需要加多少次 油，否则输出-1.
+*/
+
+
+#include <algorithm>
+#include <iostream>
+#include <queue>
+
+using namespace std;
+bool cmp(const pair<int, int> &a, const pair<int, int> &b) {
+    return a.first > b.first;
+}
+
+int get_minimum_stop(int L, int P, vector<pair<int, int>> &stop) {
+    priority_queue<int> Q;
+    int result = 0;
+    stop.push_back(make_pair(0, 0));
+    sort(stop.begin(), stop.end(), cmp);
+    for (int i = 0; i < stop.size(); i++) {
+        int dis = L - stop[i].first;
+        while (!Q.empty() && P < dis) {
+            P += Q.top();
+            Q.pop();
+            result++;
+        }
+        if(Q.empty()&&P<dis){
+            return -1;
+        }
+        P=P-dis;
+        L=stop[i].first;
+        Q.push(stop[i].second);
+    }
+
+    return result;
+}
+
+int main(){
+	vector<pair<int,int>> stop;
+	int N;
+	int L;
+	int P;
+	int distance;
+	int fuel;
+	scanf("%d",&N);
+	for(int i=0;i<N;i++){
+		scanf("%d %d",&distance,&fuel);
+		stop.push_back(make_pair(distance,fuel));
+	}
+
+	scanf("%d %d",&L,&P);
+	printf("%d\n",get_minimum_stop(L,P,stop));
+	return 0;
+
+}
+
+
+
+~~~
+
+![image-20210120163955608](/home/bibofu/.config/Typora/typora-user-images/image-20210120163955608.png)
 
 
 
